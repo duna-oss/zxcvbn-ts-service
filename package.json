@@ -4,9 +4,9 @@
   "description": "The zxcvbn-ts library, over HTTP, built as a docker image.",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
     "build": "npm run format:check && echo 'Building...' && tsc && echo 'Done.'",
-    "serve": "node dist/index.js",
+    "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
@@ -16,13 +16,14 @@
     "@zxcvbn-ts/core": "3.0.4",
     "@zxcvbn-ts/language-common": "3.0.4",
     "@zxcvbn-ts/language-en": "3.0.2",
-    "dotenv": "16.4.7",
     "express": "4.21.2",
     "helmet": "8.0.0"
   },
   "devDependencies": {
     "@types/express": "5.0.0",
+    "@types/supertest": "6.0.2",
     "prettier": "3.4.2",
+    "supertest": "7.0.0",
     "ts-node": "10.9.2",
     "typescript": "5.7.2",
     "vitest": "2.1.8"

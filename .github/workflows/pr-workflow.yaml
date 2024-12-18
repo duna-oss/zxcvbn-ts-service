@@ -1,0 +1,35 @@
+name: main branch workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  pull_request_workflow:
+    name: pull request workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: read .node-version & set NODE_VERSION environment variable
+        run: |
+          NODE_VERSION=$(cat .node-version | head -n 1 | tr -d '\n')
+          echo "NODE_VERSION=$NODE_VERSION"
+
+      - name: setup node.js $NODE_VERSION
+        uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          node-version-file: '.node-version'
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: run tests
+        run: npm test
+
+      - name: build project
+        run: npm run build
