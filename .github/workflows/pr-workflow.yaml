@@ -1,4 +1,4 @@
-name: main branch workflow
+name: pull request workflow
 
 on:
   pull_request:
@@ -27,6 +27,9 @@ jobs:
 
       - name: install dependencies
         run: npm ci
+
+      - name: check formatting
+        run: npm run format:check
 
       - name: run tests
         run: npm test
