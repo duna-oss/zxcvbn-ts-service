@@ -4,9 +4,22 @@ The [zxcvbn-ts](https://github.com/zxcvbn-ts/zxcvbn) library, over HTTP, built a
 
 ## endpoints
 
-- `POST /password-strength` - returns the strength of a password. The body should be a JSON object with a `password` key & a string value.
-- `GET /health` - returns a 200 status code if the service is up.
-- `GET /ready` - returns a 200 status code if the service is ready to accept requests.
+### `POST /password-strength`
+
+> [!note]
+> returns the strength of a password.
+> The request body should be a JSON object with a `password` key & a string value.
+> The response body is a JSON representation of a [ZxcvbnResult](https://github.com/zxcvbn-ts/zxcvbn/blob/29f1ff1cc036445492855bdd3dea0626834427a9/packages/libraries/main/src/types.ts#L292-L301).
+
+### `GET /health`
+
+> [!note]
+> returns a 200 status code if the service is up.
+
+### `GET /ready`
+
+> [!note]
+> returns a 200 status code if the service is ready to accept requests.
 
 ## try it locally:
 

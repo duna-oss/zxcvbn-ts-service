@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "build": "npm run format:check && echo 'Building...' && tsc && echo 'Done.'",
+    "build": "echo 'Building...' && tsc && echo 'Done.'",
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
