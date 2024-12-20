@@ -50,7 +50,46 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: fetch last published docker image project version
+        id: fetch_latest_published_version
+        run: |
+          if docker pull ghcr.io/${{ github.repository }}:latest; then
+            LATEST_PUBLISHED_PROJECT_VERSION=$(docker image inspect ghcr.io/${{ github.repository }}:latest \
+              --format '{{ json .RepoTags }}' | \
+              jq -r '.[]' | \
+              grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | \
+              head -n 1)
+          else
+            LATEST_PUBLISHED_PROJECT_VERSION=""
+          fi
+
+          echo "LATEST_PUBLISHED_PROJECT_VERSION=$LATEST_PUBLISHED_PROJECT_VERSION" >> $GITHUB_ENV
+          if [ -z "$LATEST_PUBLISHED_PROJECT_VERSION" ]; then
+            echo "No previously published version found. Proceeding to publish."
+          else
+            echo "Latest published project version: $LATEST_PUBLISHED_PROJECT_VERSION"
+          fi
+
+      - name: compare with current project version
+        id: check_version_changed
+        run: |
+          if [ -z "${{ env.LATEST_PUBLISHED_PROJECT_VERSION }}" ]; then
+            # No previously published version, so we must build and push
+            echo "VERSION_CHANGED=true" >> $GITHUB_ENV
+          elif [ "${{ env.PROJECT_VERSION }}" = "${{ env.LATEST_PUBLISHED_PROJECT_VERSION }}" ]; then
+            echo "VERSION_CHANGED=false" >> $GITHUB_ENV
+          else
+            echo "VERSION_CHANGED=true" >> $GITHUB_ENV
+          fi
+          echo "Current project version: ${{ env.PROJECT_VERSION }}"
+          echo "Latest published project version: ${{ env.LATEST_PUBLISHED_PROJECT_VERSION }}"
+
+      - name: not publishing docker image (version unchanged)
+        if: env.VERSION_CHANGED == 'false'
+        run: echo "Version unchanged (${{ env.PROJECT_VERSION }}). No Docker image will be built or published. Please update the version in package.json to trigger a new build."
+
       - name: build and push docker image
+        if: env.VERSION_CHANGED == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
